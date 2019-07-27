@@ -1,3 +1,4 @@
+#*-* coding: utf-8 *-*
 import pandas as pd
 
 
@@ -5,6 +6,7 @@ class Env():
     def __init__(self):
         self.cnt = 0
         self.pre_a = 0
+        self.done = False
         self.env_data = pd.read_csv("KOSPI_F_30_1.csv")
 
     def reset(self):
@@ -17,20 +19,15 @@ class Env():
      
     def step(self, a):
         s_prime = ""
-        if(a == 0):
+        if(self.pre_a == a):
             r = 0
-        elif(a == 1):
-            if(self.pre_a == 1):
-                r = 0
-            else:
-                r = -1
-        elif(a == 2):
-            if(self.pre_a == 2):
-                r = 0
-            else:
-                r = -1
+        elif(a == 0):
+            r = 0
+        else:
+            r = -1
 
-        self.pre_a = a
+        if(a != 0):
+            self.pre_a = a
         s_prime = self.getOnes()
         return s_prime, r
 
