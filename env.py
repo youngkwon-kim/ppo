@@ -18,7 +18,6 @@ class Env():
         return self.env_data.iloc[self.cnt].values
      
     def step(self, a):
-        s_prime = ""
         if(self.pre_a == a):
             r = 0
         elif(a == 0):
