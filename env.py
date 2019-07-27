@@ -22,5 +22,5 @@ class Env():
 if __name__ == '__main__':
     env = Env()
     env.reset()
-    a = 1
-    st = env.step(a)
+    for a in [1,0,2,2,0,0,0,0,0,1,2,2,0,1,1,1,2]:
+        st = env.step(a)
