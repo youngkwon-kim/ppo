@@ -8,7 +8,7 @@ class Env():
         self.pre_a = 0      # call(put medo) : 1, put(call medo) : 2, none : 0
         self.done = False
         self.position = 0   # call position : 1, put position : -1, none position : 0
-        self.position_value = []
+        self.position_value = 0.0
         self.env_data = pd.read_csv("KOSPI_F_30_1.csv").dropna()
         self.env_data = self.env_data.sort_index(ascending=False)
 
@@ -34,22 +34,30 @@ class Env():
             if(self.position == 0):
                 if(a == 1): 
                     self.position = 1
-                    self.position_value.append(s_prime[5])
+                    self.position_value = float(s_prime[5])
                 if(a == 2): 
                     self.position = -1
-                    self.position_value.append(s_prime[5])
+                    self.position_value = float(s_prime[5])
             elif(self.position == 1):
                 if(self.pre_a == 1):
                     # 익절과 손절의 평가 필요
                     self.position = 0
                     self.done = True
-                    r = -10
+                    if(s_prime[5] < (self.position_value - 0.2)):
+                        r = -10
+                    else:
+                        r = (s_prime[5] - self.position_value) * 10
+                    self.position_value = 0
             elif(self.position == -1):
                 if(self.pre_a == 2):
                     #익절과 손절의 평가 필요
                     self.position = 0
                     self.done = True
-                    r = -10
+                    if(s_prime[5] > (self.position_value - 0.2)):
+                        r = -10
+                    else:
+                        r = (s_prime[5] - self.position_value) * 10
+                    self.position_value = 0
 
         if(a != 0):
             self.pre_a = a
