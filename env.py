@@ -1,17 +1,19 @@
 #*-* coding: utf-8 *-*
 import pandas as pd
-
+import pickle
 
 class Env():
     def __init__(self):
         self.cnt = 0
         self.pre_a = 0
         self.done = False
+        self.position = 0   # call position : 1, put position : -1, none position : 0
+        self.position_value = []
         self.env_data = pd.read_csv("KOSPI_F_30_1.csv").dropna()
         self.env_data = self.env_data.sort_index(ascending=False)
 
     def reset(self):
-        self.cnt = 0
+        #self.cnt = 0
         self.pre_a = 0
         self.done = False
         self.cnt = self.cnt + 1
