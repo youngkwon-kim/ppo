@@ -11,7 +11,7 @@ class Env():
         self.env_data = self.env_data.sort_index(ascending=False)
 
     def reset(self):
-        self.cnt = 0
+        #self.cnt = 0
         self.pre_a = 0
         self.done = False
         self.cnt = self.cnt + 1
