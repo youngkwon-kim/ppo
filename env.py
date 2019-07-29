@@ -7,6 +7,8 @@ class Env():
         self.cnt = 0
         self.pre_a = 0
         self.done = False
+        self.position = 0
+        self.position_value = []
         self.env_data = pd.read_csv("KOSPI_F_30_1.csv").dropna()
         self.env_data = self.env_data.sort_index(ascending=False)
 
@@ -27,12 +29,13 @@ class Env():
         elif(a == 0):
             r = 0
         else:
-            r = -1
+            r = -10
+            self.done = True
 
         if(a != 0):
             self.pre_a = a
         s_prime = self.getOnes()
-        return s_prime, r
+        return s_prime, r, self.done
 
 if __name__ == '__main__':
     env = Env()
