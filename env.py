@@ -30,25 +30,9 @@ class Env():
         sp = []
         sp.append(s_prime[5])
 
-        reword = round((s_prime[5] - self.position_value) * 1, 2)
+        reword = round((s_prime[5] - self.position_value) * 1, 1)
 
-        if(self.pre_a == a):
-            r = 0
-            if(self.position == 1):
-                if(reword < -0.5):
-                    self.position = 0
-                    self.position_value = 0
-                    self.done = True
-                    r = reword
-                    self.info = "콜자손"
-            if(self.position == -1):
-                if(reword > 0.5):
-                    self.position = 0
-                    self.position_value = 0
-                    self.done = True
-                    r = -reword
-                    self.info = "풋자손"
-        elif(a == 0):
+        if(self.pre_a == a or a == 0):
             r = 0
             if(self.position == 1):
                 if(reword < -0.5):
@@ -93,13 +77,13 @@ class Env():
         if(a != 0):
             self.pre_a = a
         self.total = self.total + r
-        return sp, r, self.done, self.position, self.position_value, self.info, self.total
+        return sp, a, r, self.done, self.position, self.position_value, self.info, self.total
 
 if __name__ == '__main__':
     env = Env()
     s = env.reset()
     for a in [1,0,1,0,1,1,1,1,1,1,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,2,2,2,2,2]:
-        sp,r,done,posiotion,position_value, info, total = env.step(a)
-        print(sp,r,done,posiotion,position_value, info, total)
+        sp,a,r,done,posiotion,position_value, info, total = env.step(a)
+        print(sp,a,r,done,posiotion,position_value, info, total)
         if(done == True):
             env.reset()
