@@ -1,5 +1,7 @@
 #*-* coding: utf-8 *-*
 import pandas as pd
+import numpy as np
+import torch
 import pickle
 
 class Env():
@@ -7,7 +9,7 @@ class Env():
         self.cnt = 0
         self.pre_a = 0      # call(put medo) : 1, put(call medo) : 2, none : 0
         self.done = False
-        self.position = 0   # call position : 1, put position : -1, none position : 0
+        self.position = 0.0   # call position : 1, put position : -1, none position : 0
         self.position_value = 0.0
         self.total = 0.0
         self.lossCut = 0.5
@@ -18,8 +20,11 @@ class Env():
         #self.cnt = 0
         self.pre_a = 0
         self.done = False
-        self.cnt = self.cnt + 1
-        return self.env_data.iloc[self.cnt].values
+        s_prime = self.getOnes()
+        sp = [s_prime[5],s_prime[10],s_prime[11],s_prime[12],(s_prime[10] - s_prime[12]), 0.0]
+        sp3 = np.array(sp)
+        #print(sp)
+        return sp3
 
     def getOnes(self):
         self.cnt = self.cnt + 1
@@ -28,9 +33,8 @@ class Env():
     def step(self, a):
         self.info = ""
         s_prime = self.getOnes()
-        sp = []
-        sp.append([s_prime[5],s_prime[10],s_prime[11],s_prime[12],(s_prime[10] - s_prime[12])])
-
+        #sp.append([s_prime[5],s_prime[10],s_prime[11],s_prime[12],(s_prime[10] - s_prime[12])])
+        sp = [s_prime[5],s_prime[10],s_prime[11],s_prime[12],(s_prime[10] - s_prime[12])]
         reword = round((s_prime[5] - self.position_value) * 1, 1)
 
         if(self.pre_a == a or a == 0):
@@ -75,16 +79,20 @@ class Env():
                     r = -reword
                     self.info = "풋손절"
 
+        sp.append(self.position)
+        sp2 = np.array(sp)
+        #print(torch.from_numpy(sp2).float())
         if(a != 0):
             self.pre_a = a
         self.total = self.total + r
-        return sp, a, r, self.done, self.position, self.position_value, self.info, self.total
+        return sp2, r, self.done, self.position
 
 if __name__ == '__main__':
     env = Env()
     s = env.reset()
+    print(s)
     for a in [1,2,1,2,1,2,2,2,1,2,0,0,1,2,1,2,2,2,0,0,1,1,1,2]:
-        sp,a,r,done,posiotion,position_value, info, total = env.step(a)
-        print(sp,a,r,done,posiotion,position_value, info, total)
+        sp,r,done,posiotion = env.step(a)
+        print(sp,r,done,posiotion)
         if(done == True):
             env.reset()

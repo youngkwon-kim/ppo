@@ -4,6 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torch.distributions import Categorical
+import env
 
 #Hyperparameters
 learning_rate = 0.0005
@@ -18,7 +19,7 @@ class PPO(nn.Module):
         super(PPO, self).__init__()
         self.data = []
         
-        self.fc1   = nn.Linear(4,256)
+        self.fc1   = nn.Linear(6,256)
         self.fc_pi = nn.Linear(256,3)
         self.fc_v  = nn.Linear(256,1)
         self.optimizer = optim.Adam(self.parameters(), lr=learning_rate)
@@ -85,20 +86,20 @@ class PPO(nn.Module):
             self.optimizer.step()
         
 def main():
-    env = gym.make('CartPole-v1')
+    envi = env.Env()
     model = PPO()
     score = 0.0
     print_interval = 20
 
-    for n_epi in range(10000):
-        s = env.reset()
+    for n_epi in range(100):
+        s = envi.reset()
         done = False
         while not done:
             for t in range(T_horizon):
                 prob = model.pi(torch.from_numpy(s).float())
                 m = Categorical(prob)
                 a = m.sample().item()
-                s_prime, r, done, info = env.step(a)
+                s_prime, r, done, info = envi.step(a)
 
                 model.put_data((s, a, r/100.0, s_prime, prob[a].item(), done))
                 s = s_prime
