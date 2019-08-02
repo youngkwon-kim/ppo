@@ -89,9 +89,9 @@ def main():
     envi = env.Env()
     model = PPO()
     score = 0.0
-    print_interval = 20
+    print_interval = 10
 
-    for n_epi in range(100):
+    for n_epi in range(1000):
         s = envi.reset()
         done = False
         while not done:
@@ -114,7 +114,7 @@ def main():
             print("# of episode :{}, avg score : {:.1f}".format(n_epi, score/print_interval))
             score = 0.0
 
-    env.close()
+    #env.close()
 
 if __name__ == '__main__':
     main()
