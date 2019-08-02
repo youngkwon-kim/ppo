@@ -10,6 +10,7 @@ class Env():
         self.position = 0   # call position : 1, put position : -1, none position : 0
         self.position_value = 0.0
         self.total = 0.0
+        self.lossCut = 0.5
         self.env_data = pd.read_csv("KOSPI_F_30_1.csv").dropna()
         self.env_data = self.env_data.sort_index(ascending=False)
 
@@ -28,21 +29,21 @@ class Env():
         self.info = ""
         s_prime = self.getOnes()
         sp = []
-        sp.append(s_prime[5])
+        sp.append([s_prime[5],s_prime[10],s_prime[11],s_prime[12],(s_prime[10] - s_prime[12])])
 
         reword = round((s_prime[5] - self.position_value) * 1, 1)
 
         if(self.pre_a == a or a == 0):
             r = 0
             if(self.position == 1):
-                if(reword < -0.5):
+                if(reword < -self.lossCut):
                     self.position = 0
                     self.position_value = 0
                     self.done = True
                     r = reword
                     self.info = "콜자손"
             if(self.position == -1):
-                if(reword > 0.5):
+                if(reword > self.lossCut):
                     self.position = 0
                     self.position_value = 0
                     self.done = True
@@ -82,7 +83,7 @@ class Env():
 if __name__ == '__main__':
     env = Env()
     s = env.reset()
-    for a in [1,0,1,0,1,1,1,1,1,1,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,2,2,2,2,2]:
+    for a in [1,2,1,2,1,2,2,2,1,2,0,0,1,2,1,2,2,2,0,0,1,1,1,2]:
         sp,a,r,done,posiotion,position_value, info, total = env.step(a)
         print(sp,a,r,done,posiotion,position_value, info, total)
         if(done == True):
