@@ -22,8 +22,11 @@ class Env():
         #self.cnt = 0
         self.pre_a = 0
         self.done = False
-        s_prime = self.getOnes()
-        sp = [s_prime[5],s_prime[10],s_prime[11],s_prime[12],(s_prime[10] - s_prime[12]), 0.0]
+        info, s_prime = self.getOnes()
+        if(info):
+            sp = [s_prime[0],s_prime[1],s_prime[2],s_prime[3],(s_prime[4] - s_prime[5]), 0]
+        else:
+            sp = [0,0,0,0,0,0]
         sp3 = np.array(sp)
         #print(sp)
         return sp3
@@ -31,17 +34,20 @@ class Env():
     def getOnes(self):
         try:
             self.cnt = self.cnt + 1
-            re = [True, self.env_data.iloc[self.cnt].values]
+            sp = self.env_data.iloc[self.cnt].values
+            # sp[0] = End Value
+            re = [True, [sp[0],sp[1],sp[2],sp[3],(sp[4] - sp[5])]]
         except:
-            re = [False,[]]
+            re = [False,[0,0,0,0,0]]
         return re
      
     def step(self, a):
-        res, s_prime = self.getOnes()
+        info, s_prime = self.getOnes()
 
-        if(res):
-            sp = [s_prime[5],s_prime[10],s_prime[11],s_prime[12],(s_prime[10] - s_prime[12])]
-            reword = round((s_prime[5] - self.position_value) * 1, 1)
+        if(info):
+            pass
+        else:
+            pass
 
 
 
@@ -50,8 +56,8 @@ class Env():
         #print(torch.from_numpy(sp2).float())
         if(a != 0):
             self.pre_a = a
-        self.total = self.total + r
-        return sp2, r, self.done, self.position
+        self.total = self.total + reword
+        return sp2, r, self.done, info
 
 if __name__ == '__main__':
     env = Env()
