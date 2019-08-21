@@ -48,7 +48,10 @@ class Env():
 
         if(info):
             if(self.position):
-                pass
+                if(self.position_value["code"] >= s_prime[0]):
+                    pass
+                else:
+                    pass
             else:
                 self.position_value["code"] = s_prime[0]
         else:
