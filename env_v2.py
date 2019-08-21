@@ -9,8 +9,8 @@ class Env():
         self.cnt = 0
         self.pre_a = 0      # call(put medo) : 1, put(call medo) : 2, none : 0
         self.done = False
-        self.position = 0.0   # call position : 1, put position : -1, none position : 0
-        self.position_value = 0.0
+        self.position = False   # call position : 1, put position : -1, none position : 0
+        self.position_value = {}
         self.total = 0.0
         self.lossCut = 0.5
         self.linescale = 0
@@ -41,23 +41,18 @@ class Env():
             re = [False,[0,0,0,0,0]]
         print(self.cnt, sp[0])
         return re
-     
-    def setPosition(self,position,value):
-        self.position = position
-        self.position_value = value
-
-    def getPosition(self):
-        return self.position, self.position_value
 
     def step(self, a):
         info, s_prime = self.getOnes()
+        reword = 0
 
         if(info):
-            pass
+            if(self.position):
+                pass
+            else:
+                self.position_value["code"] = s_prime[0]
         else:
             pass
-
-        reword = 0
 
         s_prime.append(self.position)
         sp2 = np.array(s_prime)
