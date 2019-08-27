@@ -73,5 +73,5 @@ if __name__ == '__main__':
         for a in [1,2,1,2,1,2,2,2,1,2,0,0,1,2,1,2,2,2,0,0,1,1,1,2]:
             sp,r,done,info = env.step(a)
             print(sp,r,done,info)
-            if(done == True):
+            if done:
                 env.reset()
