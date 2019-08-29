@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import torch
 import pickle
+import random
 
 class Env():
     def __init__(self):
@@ -39,21 +40,28 @@ class Env():
             re = [True, [sp[0],sp[1],sp[2],sp[3],(sp[4] - sp[5])]]
         except:
             re = [False,[0,0,0,0,0]]
-        print(self.cnt, sp[0])
+        #print(self.cnt, sp[0])
         return re
 
     def step(self, a):
         info, s_prime = self.getOnes()
-        reword = 0
+        reword = 0.0
 
         if(info):
             if(self.position):
-                if(self.position_value["code"] >= s_prime[0]):
-                    pass
-                else:
-                    pass
+                if(a == 3):
+                    if(self.position_value["code"] >= s_prime[0]):
+                        reword = self.position_value["code"] >= s_prime[0]
+                        self.position = False
+                        self.done = True
+                    else:
+                        pass
             else:
-                self.position_value["code"] = s_prime[0]
+                if(a == 1):
+                    self.position_value["code"] = s_prime[0]
+                    self.position = True
+                    self.done = False
+                    reword = -1
         else:
             pass
 
@@ -68,10 +76,14 @@ class Env():
 if __name__ == '__main__':
     env = Env()
     s = env.reset()
+    r_tot = 0
     print(s)
-    for i in range(30):
-        for a in [1,2,1,2,1,2,2,2,1,2,0,0,1,2,1,2,2,2,0,0,1,1,1,2]:
-            sp,r,done,info = env.step(a)
-            print(sp,r,done,info)
-            if(done == True):
-                env.reset()
+    for i in range(1000):
+        a_ran = random.randint(0, 3)
+        sp, r, done, info = env.step(a_ran)
+        r_tot = r_tot + r
+        print(i, sp,r_tot, "done : ",done,", info:", info,", a : ", a_ran)
+        if done:
+            env.reset()
+        if not info:
+            break

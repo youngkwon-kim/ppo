@@ -4,7 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torch.distributions import Categorical
-import env
+import env_v2 as env
 
 #Hyperparameters
 learning_rate = 0.0005
@@ -90,6 +90,8 @@ def main():
     model = PPO()
     score = 0.0
     print_interval = 10
+    mcnt = 0
+    r_tot = 0
 
     for n_epi in range(50):
         s = envi.reset()
@@ -101,11 +103,17 @@ def main():
                 a = m.sample().item()
                 s_prime, r, done, info = envi.step(a)
 
-                model.put_data((s, a, r/100.0, s_prime, prob[a].item(), done))
+                model.put_data((s, a, r/100, s_prime, prob[a].item(), done))
                 s = s_prime
+
+                mcnt = mcnt + 1
+                r_tot = r_tot + r
+                print(mcnt, s, r_tot, a)
 
                 score += r
                 if done:
+                    break
+                if not info:
                     break
 
             model.train_net()
