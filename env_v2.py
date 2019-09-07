@@ -47,21 +47,34 @@ class Env():
         info, s_prime = self.getOnes()
         reword = 0.0
 
-        if(info):
+        if info:
             if(self.position):
+                
                 if(a == 3):
                     if(self.position_value["code"] >= s_prime[0]):
-                        reword = self.position_value["code"] >= s_prime[0]
+                        reword = self.position_value["code"] - s_prime[0]
                         self.position = False
                         self.done = True
                     else:
-                        pass
+                        reword = self.position_value["code"] - s_prime[0]
+                        self.position = False
+                        self.done = True
+                else:
+                    if((self.position_value["code"] - s_prime[0]) <= -0.2):
+                        reword = self.position_value["code"] - s_prime[0]
+                        self.position = False
+                        self.done = True
             else:
                 if(a == 1):
                     self.position_value["code"] = s_prime[0]
                     self.position = True
                     self.done = False
-                    reword = -1
+                    reword = -0.1
+                if(a == 2):
+                    self.position_value["code"] = s_prime[0]
+                    self.position = True
+                    self.done = False
+                    reword = -0.1
         else:
             pass
 

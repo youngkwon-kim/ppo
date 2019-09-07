@@ -92,6 +92,8 @@ def main():
     print_interval = 10
     mcnt = 0
     r_tot = 0
+    act_cnt = 0
+    aa = 0
 
     for n_epi in range(50):
         s = envi.reset()
@@ -102,19 +104,30 @@ def main():
                 m = Categorical(prob)
                 a = m.sample().item()
                 s_prime, r, done, info = envi.step(a)
-
-                model.put_data((s, a, r/100, s_prime, prob[a].item(), done))
+                ###################################
+                aa = a
+                if(aa == a): 
+                    act_cnt = act_cnt + 1
+                else:
+                    act_cnt = 0
+                if(act_cnt > 10):
+                    act_cnt = 0
+                    r = -10
+                ###################################
+                model.put_data((s, a, r, s_prime, prob[a].item(), done))
                 s = s_prime
+                
 
                 mcnt = mcnt + 1
                 r_tot = r_tot + r
-                print(mcnt, s, r_tot, a)
+                print(mcnt, s, r_tot, "a=", a)
 
                 score += r
                 if done:
                     break
                 if not info:
                     break
+                
 
             model.train_net()
 
